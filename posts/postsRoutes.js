@@ -19,7 +19,23 @@ router.get('/', (req, res) => {
 
 //get post by id
 router.get('/:id', (req, res) => {
-  res.status(200).json('Hello From Post');
+  const id = req.params.id;
+  db.findById(id)
+    .then(post => {
+      //   console.log('id result: ', post);
+      if (post) {
+        res
+          .status(400)
+          .json({ message: 'The post with the specified ID does not exist.' });
+      } else {
+        res.status(200).json({ post });
+      }
+    })
+    .catch(err => {
+      res.status(500).json({
+        error: 'The post information could not be retrieved.'
+      });
+    });
 });
 
 //get comments from a post
