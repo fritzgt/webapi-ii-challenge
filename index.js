@@ -7,7 +7,7 @@ const server = express();
 
 const port = 5000;
 
-server.use('/posts', postsRoutes);
+server.use('/api/posts', postsRoutes);
 
 // default route
 server.use('/', (req, res) => {
