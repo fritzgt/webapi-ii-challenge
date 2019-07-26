@@ -23,7 +23,7 @@ router.get('/:id', (req, res) => {
   db.findById(id)
     .then(post => {
       //   console.log('id result: ', post);
-      if (post) {
+      if (!`${post}`) {
         res
           .status(400)
           .json({ message: 'The post with the specified ID does not exist.' });
@@ -40,7 +40,22 @@ router.get('/:id', (req, res) => {
 
 //get comments from a post
 router.get('/:id/comments', (req, res) => {
-  res.status(200).json('Hello From Post');
+  const id = req.params.id;
+  db.findPostComments(id)
+    .then(comment => {
+      if (!`${comment}`) {
+        res
+          .status(404)
+          .json({ message: 'The post with the specified ID does not exist.' });
+      } else {
+        res.status(200).json({ comment });
+      }
+    })
+    .catch(err =>
+      res
+        .status(500)
+        .json({ error: 'The comments information could not be retrieved.' })
+    );
 });
 
 //Create a new post
