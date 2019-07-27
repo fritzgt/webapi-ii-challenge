@@ -81,13 +81,43 @@ router.post('/', (req, res) => {
 });
 
 //Create a new comment for the post
-router.post('/:id/comment', (req, res) => {
-  res.status(200).json('Hello From Post');
+router.post('/:id/comments', (req, res) => {
+  const newComment = req.body;
+  const id = req.params.id;
+  const { text } = newComment;
+  //   db.insertComment(newComment).then(comment => {
+  //     res.status(201).json({ comment });
+  //   });
+  // .catch(err => {
+  //   if (!comment) {
+  //     res
+  //       .status(404)
+  //       .json({ message: 'The post with the specified ID does not exist.' });
+  //   } else {
+  //     res.status(500).json({
+  //       error: 'There was an error while saving the comment to the database'
+  //     });
+  //   }
+  // });
 });
 
 //Delete a post
 router.delete('/:id', (req, res) => {
-  res.status(200).json('Hello From Post');
+  const id = req.params.id;
+  db.remove(id)
+    .then(deleted => {
+      console.log('delete: ', deleted);
+      if (!deleted) {
+        res
+          .status(404)
+          .json({ message: 'The post with the specified ID does not exist.' });
+      } else {
+        res.status(200).json({ deleted });
+      }
+    })
+    .catch(err => {
+      res.status(500).json({ error: 'The post could not be removed' });
+    });
 });
 
 //Update a post
