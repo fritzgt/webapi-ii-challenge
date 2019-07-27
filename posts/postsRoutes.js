@@ -81,22 +81,31 @@ router.post('/', (req, res) => {
 });
 
 //Create a new comment for the post
+//
+// insertComment(): calling insertComment while passing it a
+// comment object will add it to the database and return an
+// object with the id of the inserted comment. The object
+// looks like this: { id: 123 }. This method will throw an error if
+// the post_id field in the comment object does not match a valid post id in the database.
+//
 router.post('/:id/comments', (req, res) => {
   const newComment = req.body;
   const id = req.params.id;
-  const { text } = newComment;
-
-  //   console.log('New comment: ', newComment);
+  const { text, post_id } = newComment;
+  console.log('update: ', newComment);
   db.insertComment(newComment)
     .then(comment => {
-      console.log('Comment: ', comment);
       res.status(201).json({ comment });
     })
     .catch(err => {
-      if (!comment) {
+      if (!post_id) {
         res
           .status(404)
           .json({ message: 'The post with the specified ID does not exist.' });
+      } else if (!text) {
+        res
+          .status(400)
+          .json({ errorMessage: 'Please provide text for the comment.' });
       } else {
         res.status(500).json({
           error: 'There was an error while saving the comment to the database'
