@@ -85,20 +85,24 @@ router.post('/:id/comments', (req, res) => {
   const newComment = req.body;
   const id = req.params.id;
   const { text } = newComment;
-  //   db.insertComment(newComment).then(comment => {
-  //     res.status(201).json({ comment });
-  //   });
-  // .catch(err => {
-  //   if (!comment) {
-  //     res
-  //       .status(404)
-  //       .json({ message: 'The post with the specified ID does not exist.' });
-  //   } else {
-  //     res.status(500).json({
-  //       error: 'There was an error while saving the comment to the database'
-  //     });
-  //   }
-  // });
+
+  //   console.log('New comment: ', newComment);
+  db.insertComment(newComment)
+    .then(comment => {
+      console.log('Comment: ', comment);
+      res.status(201).json({ comment });
+    })
+    .catch(err => {
+      if (!comment) {
+        res
+          .status(404)
+          .json({ message: 'The post with the specified ID does not exist.' });
+      } else {
+        res.status(500).json({
+          error: 'There was an error while saving the comment to the database'
+        });
+      }
+    });
 });
 
 //Delete a post
@@ -122,7 +126,29 @@ router.delete('/:id', (req, res) => {
 
 //Update a post
 router.put('/:id', (req, res) => {
-  res.status(200).json('Hello From Post');
+  const post = req.body;
+  const id = req.params.id;
+  const { title, contents } = post;
+  db.update(id, post)
+    .then(ids => {
+      console.log('Id:', ids);
+      if (!ids) {
+        res
+          .status(404)
+          .json({ message: 'The post with the specified ID does not exist.' });
+      } else if (!title || !contents) {
+        res.status(400).json({
+          errorMessage: 'Please provide title and contents for the post.'
+        });
+      } else {
+        res.status(200).json({ ids });
+      }
+    })
+    .catch(err => {
+      res
+        .status(500)
+        .json({ error: 'The post information could not be modified.' });
+    });
 });
 
 module.exports = router;
