@@ -5,6 +5,8 @@ const postsRoutes = require('./posts/postsRoutes');
 
 const server = express();
 
+server.use(express.json());
+
 const port = 5000;
 
 server.use('/api/posts', postsRoutes);

@@ -60,7 +60,24 @@ router.get('/:id/comments', (req, res) => {
 
 //Create a new post
 router.post('/', (req, res) => {
-  res.status(200).json('Hello From Post');
+  const newPost = req.body;
+  const { title, contents } = newPost;
+  console.log('Testing ', contents);
+  db.insert(newPost)
+    .then(post => {
+      res.status(201).json({ post });
+    })
+    .catch(err => {
+      if (!contents || !title) {
+        res.status(400).json({
+          errorMessage: 'Please provide title and contents for the post.'
+        });
+      } else {
+        res.status(500).json({
+          error: 'There was an error while saving the post to the database'
+        });
+      }
+    });
 });
 
 //Create a new comment for the post
